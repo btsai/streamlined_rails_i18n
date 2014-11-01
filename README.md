@@ -11,7 +11,7 @@ However, instead of creating and managing separate localization files, .e.g.  EN
 
 This merit of this is that it is much easier to see / add strings together in pairs in the same file, and prevents the litter of having multiple en.yml or ja.yml files sprinkled all throughout the different levels of the `config/locales' dir.  
 
-If you have a project where you have bilingual translators (i.e. basically all multi-lingual projects), it becomes increasingly difficult if not impossible to efficiently manage the addition and deletion of new/old translations across multiple files. I started out with separate files, but after the 3rd files, I got tired of switching between files and eye-balling them, trying to make sure that they had the same nodes, etc.  
+If you have a project where you have bilingual translators (i.e. basically all multi-lingual projects), it becomes increasingly difficult if not impossible to efficiently manage the addition and deletion of new/old translations across multiple files. I started out with separate files, but after the 3rd file, I got tired of switching between files and eye-balling them, trying to make sure that they had the same nodes, etc.  
 
 With this method, you get to see all of your translations together under one node, like this:  
 ```
@@ -106,9 +106,9 @@ ruby lib/strings_parser.rb [optional regex string]
 
 ##### Alternative setup
 
-I found manually running the script to be a bit tiring.
+I found manually running the script each time to be a bit tiring.
 
-What I ended up doing was sticking this inside by Rails application.rb file, so it runs automatically whenever you start the Rails app. This way either restarting the server or running a test will generate the final files. When you're developing the UI anyhow, you need to restart the Rails server to see the changes reflected, so yo might as well put it in there.  
+What I ended up doing was sticking this inside our Rails application.rb file, so it runs automatically whenever you start the Rails app. This way either restarting the server or running a test will generate the final files. When you're developing the UI, you need to restart the Rails server anyway to see the changes reflected, so yo might as well put it in there.  
 
 Here's how you include it in application.rb:
 ```
@@ -121,7 +121,7 @@ LocaleParser.new.run if Rails.env.development? || Rails.env.test?
 
 ```
 
-It doesn't add much time to the startup, particularly if you have an SSD drive. I have about 5,000 translations, each in EN and JA across 145 files, and it takes about 0.6 sec to generate everything.
+It doesn't add much time to the startup, particularly if you have an SSD drive. We have about 5,000 translations, each in EN and JA across 145 files, and it takes only ~0.6 sec to generate everything.
 
 
 #### Other Tips
@@ -130,7 +130,7 @@ It doesn't add much time to the startup, particularly if you have an SSD drive. 
 
 There is a Rails 'lazy' shorthand reference (t('.key_name'), note the prefix '.') when using translation strings in views etc in your code.  
 
-*DON'T DO THIS*. You will forget you have these and as you extract partials or refactor your template code, this will bite you in the ass. I'm still suffering from this a year out. It's great in concept when you first start out, but it's a terrible thing to do.  
+*DON'T DO THIS*. You will forget you have these and as you extract partials or refactor your template code, this will bite you in the ass. I'm still suffering from this a year out. It's great in concept when you first start out, but it's a terrible thing to do. They should remove this from Rails.  
 
 2. Additional tweaks  
 
@@ -237,14 +237,16 @@ or
 e(:model_name, 'error_name.sub_node')
 ```
 
+Isn't that easier? These should be default in Rails too.  
 
-#### Making Life Easy For Translators
+
+### Making Life Easy For Translators
 
 Then there's the reality about a month into your project where not only are you generating new translation files, but you're going back and changing the base English strings as you change features etc.  
 
 New files are easy - pass them over to your translator, get them translated, copy them to the config dir, run the parser (manually or automatically), commit. Easy-peasy.  
 
-Now imagine you have a large change that affects 15 files with say 100 strings changed. Most likely your translator doesn't use git and definitely doesn't know how to do a git diff to try to find out what's been changed. Commenting on the changes doesn't work well either - you have to find the changes and then you have to remove all of your comments before committing. More pain.  
+Now imagine you have a large change that affects 15 files with say 100 strings changed. Most likely your translator doesn't use git and definitely doesn't know how to do a git diff to try to find out what's been changed. Commenting on the changes doesn't work well either - you have to find the changes and then you have to remove all of your comments before committing. *More pain*.  
 
 I've added a helpful little script that will generate an HTML file with the git diff, plus links to the files on github, AND as a special bonus if you allow your translators to touch your code (it works on our team), links to the exact line in the edit window on github.  
 
